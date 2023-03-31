@@ -7,9 +7,9 @@ func _ready():
 	print("Current device: ", AudioServer.get_input_device())
 
 
-func _on_voip_client_user_connected(peer: WebRTCMultiplayerPeer, audio_stream: AudioStream):
-	pass # Replace with function body.
+func _on_voip_client_user_connected(peer: WebRTCPeerConnection, audio_stream: AudioStreamVOIP):
+	pass
 
 
-func _on_voip_client_user_disconnected(peer: WebRTCMultiplayerPeer):
-	pass # Replace with function body.
+func _on_voip_client_user_disconnected(peer: WebRTCPeerConnection):
+	pass

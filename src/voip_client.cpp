@@ -2,6 +2,7 @@
 
 using namespace godot;
 
+
 void VOIPClient::_bind_methods(){
 
     ClassDB::bind_method(D_METHOD("set_input"), &VOIPClient::set_input);
@@ -19,7 +20,7 @@ void VOIPClient::_bind_methods(){
     ADD_SIGNAL( MethodInfo(
         "user_connected",
         PropertyInfo(Variant::OBJECT, "peer", godot::PROPERTY_HINT_NONE, "", 6U, "WebRTCPeerConnection"),
-        PropertyInfo(Variant::OBJECT, "audio_stream", godot::PROPERTY_HINT_NONE, "", 6U, "AudioStream")
+        PropertyInfo(Variant::OBJECT, "audio_stream", godot::PROPERTY_HINT_NONE, "", 6U, "AudioStreamVOIP")
     ));
 
     ADD_SIGNAL( MethodInfo(
