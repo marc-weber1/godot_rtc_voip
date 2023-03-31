@@ -1,5 +1,6 @@
 2a60927148abd1d33b818b535e306557
-::res://::1680233482
+::res://::1680233920
 icon.svg::CompressedTexture2D::6831564210035496458::1680230713::1680230726::1::::<><>::
-::res://bin/::1680233389
-gdexample.gdextension::GDExtension::-1::1680233452::0::1::::<><>::
+main.tscn::PackedScene::5069354414074260206::1680233889::0::1::::<><>::
+::res://bin/::1680233809
+voiprtc.gdextension::GDExtension::-1::1680233800::0::1::::<><>::
