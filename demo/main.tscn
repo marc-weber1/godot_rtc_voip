@@ -1,3 +1,14 @@
-[gd_scene format=3 uid="uid://cehvr5x3hmgnm"]
+[gd_scene load_steps=3 format=3 uid="uid://cehvr5x3hmgnm"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_uw2s7"]
+
+[sub_resource type="AudioStream" id="AudioStream_gimoi"]
 
 [node name="Node3D" type="Node3D"]
+script = ExtResource("1_uw2s7")
+
+[node name="VOIPClient" type="VOIPClient" parent="."]
+input = SubResource("AudioStream_gimoi")
+
+[connection signal="user_connected" from="VOIPClient" to="." method="_on_voip_client_user_connected"]
+[connection signal="user_disconnected" from="VOIPClient" to="." method="_on_voip_client_user_disconnected"]
