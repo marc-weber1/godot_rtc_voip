@@ -1,0 +1,9 @@
+[configuration]
+
+entry_symbol = "voip_rtc_library_init"
+
+[libraries]
+
+linux.64="res://demo/bin/libgdexample.linux.64.so"
+windows.x86_64="res://bin/libgdexample.windows.template_debug.x86_64.dll"
+macos="res://demo/bin/libgdexample.macos.framework"

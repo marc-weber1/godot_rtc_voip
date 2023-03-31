@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="demo"
-config/features=PackedStringArray("4.0", "GL Compatibility")
+config/name="RTC VOIP Demo"
+config/features=PackedStringArray("4.1", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [rendering]
