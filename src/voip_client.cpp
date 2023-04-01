@@ -21,13 +21,13 @@ void VOIPClient::_bind_methods(){
 
     ADD_SIGNAL( MethodInfo(
         "user_connected",
-        PropertyInfo(Variant::OBJECT, "peer", godot::PROPERTY_HINT_NONE, "", 6U, "WebRTCPeerConnection"),
-        PropertyInfo(Variant::OBJECT, "audio_stream", godot::PROPERTY_HINT_NONE, "", 6U, "AudioStreamVOIP")
+        PropertyInfo(Variant::INT, "peer_id"),
+        PropertyInfo(Variant::OBJECT, "audio_stream", godot::PROPERTY_HINT_RESOURCE_TYPE, "", 6U, "AudioStreamVOIP")
     ));
 
     ADD_SIGNAL( MethodInfo(
         "user_disconnected",
-        PropertyInfo(Variant::OBJECT, "peer", godot::PROPERTY_HINT_NONE, "", 6U, "WebRTCPeerConnection")
+        PropertyInfo(Variant::INT, "peer_id")
     ));
 }
 
@@ -36,10 +36,10 @@ VOIPClient::VOIPClient(){
 
 void VOIPClient::add_debug_peer(){
     // DEBUG
-    Ref<WebRTCPeerConnection> peer_conn = new WebRTCPeerConnection();
-    Ref<AudioStreamVOIP> peer_stream = new AudioStreamVOIP(peer_conn);
+    Ref<AudioStreamVOIP> peer_stream;
+    peer_stream.instantiate();
     peer_streams.append( peer_stream );
-    emit_signal("user_connected", peer_conn, peer_stream);
+    emit_signal("user_connected", 0, peer_stream);
 }
 
 void VOIPClient::set_input(const Ref<AudioStream> _in){

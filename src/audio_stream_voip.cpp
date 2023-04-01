@@ -8,10 +8,6 @@ AudioStreamVOIP::AudioStreamVOIP(Ref<WebRTCPeerConnection> _peer_conn) : peer_co
 
 }
 
-void AudioStreamVOIP::reset(){
-
-}
-
 void AudioStreamVOIP::_bind_methods(){
     ClassDB::bind_method(D_METHOD("get_stream_name"), &AudioStreamVOIP::_get_stream_name);
 }

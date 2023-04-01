@@ -16,7 +16,6 @@ void AudioStreamPlaybackVOIP::_start(double _){
 
 void AudioStreamPlaybackVOIP::_stop(){
     active = false;
-    base->reset();
 }
 
 bool AudioStreamPlaybackVOIP::_is_playing() const{

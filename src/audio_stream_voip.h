@@ -22,7 +22,6 @@ protected:
 
 public:
     AudioStreamVOIP(Ref<WebRTCPeerConnection> _peer_con = Ref<WebRTCPeerConnection>());
-    void reset();
 
     virtual Ref<AudioStreamPlayback> _instantiate_playback() const override;
 

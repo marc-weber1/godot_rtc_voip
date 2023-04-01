@@ -12,8 +12,9 @@ func _ready():
 	$VOIPClient.add_debug_peer()
 
 
-func _on_voip_client_user_connected(peer: WebRTCPeerConnection, audio_stream: AudioStream):
+func _on_voip_client_user_connected(peer_id: int, audio_stream: AudioStream):
 	print("Client connected")
+	print(audio_stream.get_class())
 	var scene_instance = user.instantiate()
 	add_child(scene_instance)
 	scene_instance.stream = audio_stream
@@ -22,5 +23,5 @@ func _on_voip_client_user_connected(peer: WebRTCPeerConnection, audio_stream: Au
 	#peers[peer] = scene_instance
 
 
-func _on_voip_client_user_disconnected(peer: WebRTCPeerConnection):
+func _on_voip_client_user_disconnected(peer_id: int):
 	pass
