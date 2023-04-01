@@ -4,6 +4,14 @@
 using namespace godot;
 
 
+AudioStreamVOIP::AudioStreamVOIP(Ref<WebRTCPeerConnection> _peer_conn) : peer_conn(_peer_conn) {
+
+}
+
+void AudioStreamVOIP::reset(){
+
+}
+
 void AudioStreamVOIP::_bind_methods(){
     ClassDB::bind_method(D_METHOD("get_stream_name"), &AudioStreamVOIP::_get_stream_name);
 }

@@ -4,6 +4,7 @@
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
 #include <godot_cpp/templates/hash_set.hpp>
+#include <godot_cpp/classes/web_rtc_peer_connection.hpp>
 
 
 namespace godot {
@@ -14,11 +15,15 @@ class AudioStreamVOIP : public AudioStream {
 
 private:
     friend class AudioStreamPlaybackVOIP;
+    Ref<WebRTCPeerConnection> peer_conn;
 
 protected:
     static void _bind_methods();
 
 public:
+    AudioStreamVOIP(Ref<WebRTCPeerConnection> _peer_con = Ref<WebRTCPeerConnection>());
+    void reset();
+
     virtual Ref<AudioStreamPlayback> _instantiate_playback() const override;
 
     virtual String _get_stream_name() const override { return "VOIP Peer"; }

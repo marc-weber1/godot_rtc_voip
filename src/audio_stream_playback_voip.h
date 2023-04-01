@@ -14,6 +14,10 @@ class AudioStreamPlaybackVOIP : public AudioStreamPlayback {
     GDCLASS(AudioStreamPlaybackVOIP, AudioStreamPlayback)
     friend class AudioStreamVOIP;
 
+private:
+    bool active;
+    int samples_processed;
+
 protected:
     static void _bind_methods();
 

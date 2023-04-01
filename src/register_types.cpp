@@ -3,6 +3,7 @@
 #include "voip_server.h"
 #include "voip_client.h"
 #include "audio_stream_voip.h"
+#include "audio_stream_playback_voip.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -20,6 +21,7 @@ void initialize_voip_rtc_module(ModuleInitializationLevel p_level) {
     ClassDB::register_class<VOIPServer>();
     ClassDB::register_class<VOIPClient>();
     ClassDB::register_class<AudioStreamVOIP>();
+    ClassDB::register_class<AudioStreamPlaybackVOIP>();
 }
 
 void uninitialize_voip_rtc_module(ModuleInitializationLevel p_level) {
