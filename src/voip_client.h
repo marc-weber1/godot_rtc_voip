@@ -4,8 +4,8 @@
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/templates/vector.hpp>
-#include <godot_cpp/classes/web_rtc_multiplayer_peer.hpp>
 
+#include "rtc_client.h"
 #include "audio_stream_voip.h"
 
 
@@ -17,8 +17,8 @@ class VOIPClient : public Node {
 
 private:
     Ref<AudioStream> input;
-    WebRTCMultiplayerPeer rtc_mp;
-    //HashMap<int, Ref<AudioStreamVOIP>> peer_streams; // peer_id: output_stream
+    RTCClient rtc_client;
+    //HashMap<long, Ref<AudioStreamVOIP>> peer_streams; // peer_id: output_stream
     Vector<Ref<AudioStreamVOIP>> peer_streams; // DEBUG
 
 protected:
@@ -26,10 +26,15 @@ protected:
 
 public:
     VOIPClient();
-    void add_debug_peer();
+    void connect(String ip);
+    void add_debug_peer(); // DEBUG
 
     void set_input(Ref<AudioStream>);
     Ref<AudioStream> get_input() const;
+
+    // Signals
+    void player_connected(int peer_id);
+    void player_disconnected(int peer_id);
 };
 
 

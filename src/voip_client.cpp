@@ -9,6 +9,9 @@ void VOIPClient::_bind_methods(){
 
     ClassDB::bind_method(D_METHOD("get_input"), &VOIPClient::get_input);
 
+    ClassDB::bind_method(D_METHOD("player_connected"), &VOIPClient::player_connected);
+    ClassDB::bind_method(D_METHOD("player_disconnected"), &VOIPClient::player_connected);
+
     ClassDB::bind_method(D_METHOD("add_debug_peer"), &VOIPClient::add_debug_peer); // DEBUG
 
     ClassDB::add_property(
@@ -34,6 +37,11 @@ void VOIPClient::_bind_methods(){
 VOIPClient::VOIPClient(){
 }
 
+void VOIPClient::connect(String ip){
+    rtc_client.connect("user_connected", Callable(this, "player_connected"));
+    rtc_client.connect("user_disconnected", Callable(this, "player_disconnected"));
+}
+
 void VOIPClient::add_debug_peer(){
     // DEBUG
     Ref<AudioStreamVOIP> peer_stream;
@@ -48,4 +56,15 @@ void VOIPClient::set_input(const Ref<AudioStream> _in){
 
 Ref<AudioStream> VOIPClient::get_input() const{
     return input;
+}
+
+
+// Signals
+
+void VOIPClient::player_connected(int peer_id){
+
+}
+
+void VOIPClient::player_disconnected(int peer_id){
+
 }
