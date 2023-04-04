@@ -17,7 +17,7 @@ class VOIPClient : public Node {
 
 private:
     Ref<AudioStream> input;
-    RTCClient rtc_client;
+    Ref<P2PClient> client;
     //HashMap<long, Ref<AudioStreamVOIP>> peer_streams; // peer_id: output_stream
     Vector<Ref<AudioStreamVOIP>> peer_streams; // DEBUG
 
@@ -26,13 +26,15 @@ protected:
 
 public:
     VOIPClient();
-    void connect(String ip);
+    void connect_to_server(String ip, String lobby_id);
     void add_debug_peer(); // DEBUG
 
     void set_input(Ref<AudioStream>);
     Ref<AudioStream> get_input() const;
+    void set_client(Ref<P2PClient>);
+    Ref<P2PClient> get_client();
 
-    // Signals
+    // Signal handlers
     void player_connected(int peer_id);
     void player_disconnected(int peer_id);
 };

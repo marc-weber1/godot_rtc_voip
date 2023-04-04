@@ -35,11 +35,12 @@ void VOIPClient::_bind_methods(){
 }
 
 VOIPClient::VOIPClient(){
+    
 }
 
-void VOIPClient::connect(String ip){
-    rtc_client.connect("user_connected", Callable(this, "player_connected"));
-    rtc_client.connect("user_disconnected", Callable(this, "player_disconnected"));
+void VOIPClient::connect_to_server(String ip, String lobby_id){
+    client->connect("user_connected", Callable(this, "player_connected"));
+    client->connect("user_disconnected", Callable(this, "player_disconnected"));
 }
 
 void VOIPClient::add_debug_peer(){
@@ -56,6 +57,14 @@ void VOIPClient::set_input(const Ref<AudioStream> _in){
 
 Ref<AudioStream> VOIPClient::get_input() const{
     return input;
+}
+
+void VOIPClient::set_client(const Ref<P2PClient> _client){
+    client = _client;
+}
+
+Ref<P2PClient> VOIPClient::get_client() {
+    return client;
 }
 
 
