@@ -29,6 +29,8 @@ public:
     void connect_to_server(String ip, String lobby_id);
     void add_debug_peer(); // DEBUG
 
+    void _physics_process(double) override;
+
     void set_input(Ref<AudioStream>);
     Ref<AudioStream> get_input() const;
     void set_client(Ref<P2PClient>);

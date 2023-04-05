@@ -35,7 +35,7 @@ void VOIPClient::_bind_methods(){
 }
 
 VOIPClient::VOIPClient(){
-    
+    // Initialize client to new RTCClient?
 }
 
 void VOIPClient::connect_to_server(String ip, String lobby_id){
@@ -50,6 +50,15 @@ void VOIPClient::add_debug_peer(){
     peer_streams.append( peer_stream );
     emit_signal("user_connected", 0, peer_stream);
 }
+
+void VOIPClient::_physics_process(double _delta){
+    if(!client.is_null()){
+        client->poll();
+    }
+}
+
+
+// Sets + Gets
 
 void VOIPClient::set_input(const Ref<AudioStream> _in){
     input = _in;

@@ -5,15 +5,11 @@
 using namespace godot;
 
 
-RTCClient::RTCClient(String ip, String lobby_id){
+RTCClient::RTCClient(){
 
 }
 
-void RTCClient::_physics_process(double _d){
-    poll_handshake(); // Connect & check for new connections
-}
-
-void RTCClient::poll_handshake(){
+void RTCClient::poll(){
     WebSocketPeer::State old_state = handshake_ws.get_ready_state();
     if(old_state == WebSocketPeer::STATE_CLOSED){
         return;
@@ -23,6 +19,7 @@ void RTCClient::poll_handshake(){
     WebSocketPeer::State state = handshake_ws.get_ready_state();
     if(state != old_state && state == WebSocketPeer::STATE_OPEN && autojoin){
         // Connected to handshake server
+        emit_signal("server_connected");
 
         join_lobby("a"); // Request connection to all others in lobby
     }
@@ -38,6 +35,7 @@ void RTCClient::poll_handshake(){
         String reason = handshake_ws.get_close_reason();
 
         // Handshake server disconnected
+        emit_signal("server_disconnected");
     }
 }
 
@@ -47,13 +45,23 @@ void RTCClient::join_lobby(String lobby_id){
 
 bool RTCClient::parse_handshake_message(){
     Variant parsed = JSON::parse_string(handshake_ws.get_packet().get_string_from_utf8());
+    // Todo
+    return true;
 }
 
-void RTCClient::connect_to_server(){
-    
+Error RTCClient::send_msg(Message type, int id, String data){
+    Dictionary msg;
+    msg["type"] = type;
+    msg["id"] = id;
+    msg["data"] = data;
+    return handshake_ws.send_text(JSON::stringify(msg));
+}
+
+void RTCClient::connect_to_server(String ip){
+    disconnect_from_server();
+    handshake_ws.connect_to_url(ip);
 }
 
 void RTCClient::disconnect_from_server(){
-    handshake_ws.close(); // Just in case we disconnect while connecting
-
+    handshake_ws.close();
 }
