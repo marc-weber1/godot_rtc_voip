@@ -16,8 +16,6 @@ class P2PClient : public RefCounted {
 
 protected:
     static void _bind_methods();
-    /*template <class T, class B>
-    static void register_virtuals();*/
 
 public:
     virtual void poll(); // VOIPClient will call this regularly

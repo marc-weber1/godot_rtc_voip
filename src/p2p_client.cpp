@@ -27,15 +27,4 @@ void P2PClient::_bind_methods(){
     BIND_VIRTUAL_METHOD(P2PClient, poll);
 }
 
-/*template <class T, class B>
-void P2PClient::register_virtuals(){
-    RefCounted::register_virtuals<T, B>();
-
-    // I honestly have no idea what I'm doing here, hope this works
-    // Supposed to let people override the poll() method
-    if constexpr (!std::is_same_v<decltype(&B::poll),decltype(&T::poll)>) {
-        BIND_VIRTUAL_METHOD(T, poll);
-    }
-}*/
-
 void P2PClient::poll() {}

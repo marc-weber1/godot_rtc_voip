@@ -32,6 +32,16 @@ private:
     bool parse_handshake_message();
     Error send_msg(Message type, int id, String data="");
 
+    void lobby_joined(String lobby);
+    void connected(int64_t src_id, bool use_mesh);
+    void disconnected();
+    void peer_connected(int64_t id);
+    void peer_disconnected(int64_t id);
+    void offer_received(int64_t id, String offer);
+    void answer_received(int64_t id, String answer);
+    void candidate_received(int64_t id, String mid, int64_t index, String sdp);
+    void lobby_sealed();
+
 public:
     bool autojoin;
 
