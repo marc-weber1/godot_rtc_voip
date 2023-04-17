@@ -32,21 +32,26 @@ private:
     bool parse_handshake_message();
     Error send_msg(Message type, int id, String data="");
 
+    // Handle WebRTCMultiplayerPeer
+    String lobby;
+    bool sealed = false;
     void lobby_joined(String lobby);
     void connected(int64_t src_id, bool use_mesh);
     void disconnected();
-    void peer_connected(int64_t id);
-    void peer_disconnected(int64_t id);
-    void offer_received(int64_t id, String offer);
-    void answer_received(int64_t id, String answer);
-    void candidate_received(int64_t id, String mid, int64_t index, String sdp);
+    void peer_connected(int32_t id);
+    void peer_disconnected(int32_t id);
+    void offer_received(int32_t id, String offer);
+    void answer_received(int32_t id, String answer);
+    void candidate_received(int32_t id, String mid, int64_t index, String sdp);
     void lobby_sealed();
+    void offer_created(String type, String data, int32_t id);
+    void new_ice_candidate(String mid_name, String index_name, String sdp_name, int64_t id);
 
 public:
     bool autojoin;
 
     RTCClient();
-    void join_lobby(String lobby_id);
+    Error join_lobby(String lobby_id);
     void poll() override; // Called by VOIPClient
 
     virtual void connect_to_server(String ip);

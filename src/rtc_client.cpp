@@ -1,6 +1,7 @@
 #include "rtc_client.h"
 
 #include <godot_cpp/classes/json.hpp>
+#include <godot_cpp/classes/web_rtc_peer_connection.hpp>
 
 using namespace godot;
 
@@ -16,6 +17,7 @@ void RTCClient::connect_to_server(String ip){
 
 void RTCClient::disconnect_from_server(){
     handshake_ws.close();
+    rtc_mp.close();
 }
 
 void RTCClient::poll(){
@@ -108,43 +110,87 @@ Error RTCClient::send_msg(Message type, int id, String data){
     return handshake_ws.send_text(JSON::stringify(msg));
 }
 
-void RTCClient::join_lobby(String lobby_id){
-
+Error RTCClient::join_lobby(String lobby_id){
+    return send_msg(Message::JOIN, 1, lobby_id);
 }
 
 
-void godot::RTCClient::lobby_joined(String lobby)
-{
+// Handle WebRTCMultiplayerPeer
+
+void godot::RTCClient::lobby_joined(String _lobby){
+    lobby = _lobby;
 }
 
-void godot::RTCClient::connected(int64_t src_id, bool use_mesh)
-{
+void godot::RTCClient::lobby_sealed(){
+    sealed = true;
 }
 
-void godot::RTCClient::disconnected()
-{
+void godot::RTCClient::connected(int64_t src_id, bool use_mesh){
+    printf("CONNECTED");
 }
 
-void godot::RTCClient::peer_connected(int64_t id)
-{
+void godot::RTCClient::disconnected(){
+    printf("DISCONNECTED");
+    if(!sealed) disconnect_from_server();
 }
 
-void godot::RTCClient::peer_disconnected(int64_t id)
-{
+void godot::RTCClient::peer_connected(int32_t id){
+    Ref<WebRTCPeerConnection> peer;
+    peer.instantiate();
+
+    Dictionary ice_args;
+    Dictionary ice_servers;
+    Array urls;
+    urls.append("stun:stun.l.google.com:19302");
+    ice_servers["urls"] = urls;
+    ice_args["iceServers"] = ice_servers;
+    peer->initialize( ice_args );
+
+    peer->connect("session_description_created", Callable(this, "offer_created")); // How to bind ID?
+    peer->connect("ice_candidate_created", Callable(this, "new_ice_candidate")); // How do bind ID?
+    rtc_mp.add_peer(peer, id);
+    if(id < rtc_mp.get_unique_id()){ // So lobby creator never creates offers
+        peer->create_offer();
+    }
 }
 
-void godot::RTCClient::offer_received(int64_t id, String offer)
-{
+void godot::RTCClient::peer_disconnected(int32_t id){
+    if(rtc_mp.has_peer(id))
+        rtc_mp.remove_peer(id);
 }
 
-void godot::RTCClient::answer_received(int64_t id, String answer)
-{
+void godot::RTCClient::offer_received(int32_t id, String offer){
+    if(rtc_mp.has_peer(id)){
+        //WebRTCPeerConnection conn = rtc_mp.get_peer(id)["connection"];
+        //conn.set_remote_description("offer", offer);
+    }
 }
 
-void godot::RTCClient::candidate_received(int64_t id, String mid, int64_t index, String sdp)
-{
+void godot::RTCClient::answer_received(int32_t id, String answer){
+    if(rtc_mp.has_peer(id)){
+        //rtc_mp.get_peer(id)["connection"].set_remote_description("answer", answer);
+    }
 }
 
-void godot::RTCClient::lobby_sealed()
-{
+void godot::RTCClient::candidate_received(int32_t id, String mid, int64_t index, String sdp){
+    if(rtc_mp.has_peer(id)){
+        //rtc_mp.get_peer(id)["connection"].add_ice_candidate(mid, index, sdp);
+    }
+}
+
+void godot::RTCClient::offer_created(String type, String data, int32_t id){
+    if(!rtc_mp.has_peer(id)) return;
+
+    /*WebRTCPeerConnection conn = rtc_mp.get_peer(id)["connection"];
+    conn.set_local_description(type, data);
+    if(type == "offer"){ // Send offer
+        send_msg(Message::OFFER, id, data);
+    }
+    else{ // Send answer
+        send_msg(Message::ANSWER, id, data);
+    }*/
+}
+
+void godot::RTCClient::new_ice_candidate(String mid_name, String index_name, String sdp_name, int64_t id){
+    send_msg(Message::CANDIDATE, id, "\n" + mid_name + "\n" + index_name + "\n" + sdp_name);
 }
