@@ -4,7 +4,7 @@
 using namespace godot;
 
 
-AudioStreamVOIP::AudioStreamVOIP(Ref<WebRTCPeerConnection> _peer_conn) : peer_conn(_peer_conn) {
+AudioStreamVOIP::AudioStreamVOIP(Ref<PacketPeer> _peer_conn) : peer_conn(_peer_conn) {
 
 }
 

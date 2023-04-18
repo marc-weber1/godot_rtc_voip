@@ -5,10 +5,6 @@
 using namespace godot;
 
 
-void AudioStreamPlaybackVOIP::_bind_methods(){
-
-}
-
 void AudioStreamPlaybackVOIP::_start(double _){
     active = true;
     samples_processed = 0;
@@ -22,9 +18,7 @@ bool AudioStreamPlaybackVOIP::_is_playing() const{
     return active;
 }
 
-void AudioStreamPlaybackVOIP::_tag_used_streams(){
 
-}
 
 // WARNING: REALTIME THREAD
 // DO NOT MUTEX LOCK

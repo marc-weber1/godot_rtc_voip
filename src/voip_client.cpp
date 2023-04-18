@@ -9,8 +9,8 @@ void VOIPClient::_bind_methods(){
 
     ClassDB::bind_method(D_METHOD("get_input"), &VOIPClient::get_input);
 
-    ClassDB::bind_method(D_METHOD("player_connected"), &VOIPClient::player_connected);
-    ClassDB::bind_method(D_METHOD("player_disconnected"), &VOIPClient::player_connected);
+    ClassDB::bind_method(D_METHOD("add_peer"), &VOIPClient::add_peer);
+    ClassDB::bind_method(D_METHOD("remove_peer"), &VOIPClient::remove_peer);
 
     ClassDB::bind_method(D_METHOD("add_debug_peer"), &VOIPClient::add_debug_peer); // DEBUG
 
@@ -39,8 +39,8 @@ VOIPClient::VOIPClient(){
 }
 
 void VOIPClient::connect_to_server(String ip, String lobby_id){
-    client->connect("user_connected", Callable(this, "player_connected"));
-    client->connect("user_disconnected", Callable(this, "player_disconnected"));
+    //client->connect("user_connected", Callable(this, "player_connected"));
+    //client->connect("user_disconnected", Callable(this, "player_disconnected"));
 }
 
 void VOIPClient::add_debug_peer(){
@@ -52,9 +52,9 @@ void VOIPClient::add_debug_peer(){
 }
 
 void VOIPClient::_physics_process(double _delta){
-    if(!client.is_null()){
+    /*if(!client.is_null()){
         client->poll();
-    }
+    }*/
 }
 
 
@@ -68,21 +68,18 @@ Ref<AudioStream> VOIPClient::get_input() const{
     return input;
 }
 
-void VOIPClient::set_client(const Ref<P2PClient> _client){
-    client = _client;
+Ref<AudioStreamVOIP> VOIPClient::add_peer(Ref<PacketPeer> peer){
+    Ref<AudioStreamVOIP> ret;
+    ret->peer_conn = peer;
+    peer_streams.push_back(ret);
+    return ret;
 }
 
-Ref<P2PClient> VOIPClient::get_client() {
-    return client;
-}
-
-
-// Signals
-
-void VOIPClient::player_connected(int peer_id){
-
-}
-
-void VOIPClient::player_disconnected(int peer_id){
-
+void VOIPClient::remove_peer(Ref<PacketPeer> peer){
+    for(int i=0; i<peer_streams.size(); i++){
+        if(peer_streams[i]->peer_conn == peer){
+            peer_streams.remove_at(i);
+            break;
+        }
+    }
 }

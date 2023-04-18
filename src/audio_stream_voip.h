@@ -4,7 +4,7 @@
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
 #include <godot_cpp/templates/hash_set.hpp>
-#include <godot_cpp/classes/web_rtc_peer_connection.hpp>
+#include <godot_cpp/classes/packet_peer.hpp>
 
 
 namespace godot {
@@ -15,13 +15,14 @@ class AudioStreamVOIP : public AudioStream {
 
 private:
     friend class AudioStreamPlaybackVOIP;
-    Ref<WebRTCPeerConnection> peer_conn;
 
 protected:
     static void _bind_methods();
 
 public:
-    AudioStreamVOIP(Ref<WebRTCPeerConnection> _peer_con = Ref<WebRTCPeerConnection>());
+    Ref<PacketPeer> peer_conn;
+
+    AudioStreamVOIP(Ref<PacketPeer> _peer_con = Ref<PacketPeer>());
 
     virtual Ref<AudioStreamPlayback> _instantiate_playback() const override;
 
@@ -30,6 +31,11 @@ public:
 	virtual bool _is_monophonic() const override { return true; }
     virtual double _get_bpm() const override { return 0.0; }
 	virtual int32_t _get_beat_count() const override { return 0; }
+
+    // Crack addict techniques
+    PacketPeer* operator->(){
+        return peer_conn.ptr();
+    }
 
 };
 

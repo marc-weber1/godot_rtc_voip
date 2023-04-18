@@ -5,7 +5,6 @@
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/templates/vector.hpp>
 
-#include "rtc_client.h"
 #include "audio_stream_voip.h"
 
 
@@ -17,7 +16,6 @@ class VOIPClient : public Node {
 
 private:
     Ref<AudioStream> input;
-    Ref<P2PClient> client;
     //HashMap<long, Ref<AudioStreamVOIP>> peer_streams; // peer_id: output_stream
     Vector<Ref<AudioStreamVOIP>> peer_streams; // DEBUG
 
@@ -33,12 +31,10 @@ public:
 
     void set_input(Ref<AudioStream>);
     Ref<AudioStream> get_input() const;
-    void set_client(Ref<P2PClient>);
-    Ref<P2PClient> get_client();
 
     // Signal handlers
-    void player_connected(int peer_id);
-    void player_disconnected(int peer_id);
+    Ref<AudioStreamVOIP> add_peer(Ref<PacketPeer> peer);
+    void remove_peer(Ref<PacketPeer> peer);
 };
 
 
