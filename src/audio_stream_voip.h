@@ -32,11 +32,6 @@ public:
     virtual double _get_bpm() const override { return 0.0; }
 	virtual int32_t _get_beat_count() const override { return 0; }
 
-    // Crack addict techniques
-    PacketPeer* operator->(){
-        return peer_conn.ptr();
-    }
-
 };
 
 

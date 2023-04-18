@@ -52,9 +52,19 @@ void VOIPClient::add_debug_peer(){
 }
 
 void VOIPClient::_physics_process(double _delta){
-    /*if(!client.is_null()){
-        client->poll();
-    }*/
+    if(input.is_null() || peer_streams.size() == 0) return;
+
+    // Read from microphone stream input
+    PackedByteArray to_send;
+    //input-> ???
+
+    // Send to all peers
+
+    if(to_send.size() > 0){
+        for(Ref<AudioStreamVOIP> stream : peer_streams){
+            stream->peer_conn->put_packet(to_send);
+        }
+    }
 }
 
 
