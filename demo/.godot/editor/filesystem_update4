@@ -1,2 +1,3 @@
-res://user.tscn
 res://main.tscn
+res://multiplayer_client.gd
+res://user.tscn

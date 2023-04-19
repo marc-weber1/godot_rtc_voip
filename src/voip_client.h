@@ -16,16 +16,13 @@ class VOIPClient : public Node {
 
 private:
     Ref<AudioStream> input;
-    //HashMap<long, Ref<AudioStreamVOIP>> peer_streams; // peer_id: output_stream
-    Vector<Ref<AudioStreamVOIP>> peer_streams; // DEBUG
+    Vector<Ref<AudioStreamVOIP>> peer_streams;
 
 protected:
     static void _bind_methods();
 
 public:
     VOIPClient();
-    void connect_to_server(String ip, String lobby_id);
-    void add_debug_peer(); // DEBUG
 
     void _physics_process(double) override;
 

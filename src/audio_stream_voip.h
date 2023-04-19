@@ -20,7 +20,7 @@ protected:
     static void _bind_methods();
 
 public:
-    Ref<PacketPeer> peer_conn;
+    Ref<PacketPeer> peer_conn; // WARNING: starts null
 
     AudioStreamVOIP(Ref<PacketPeer> _peer_con = Ref<PacketPeer>());
 
