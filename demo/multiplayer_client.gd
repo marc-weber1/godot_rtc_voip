@@ -49,6 +49,7 @@ func _create_peer(id):
 	var scene_instance = user.instantiate()
 	add_child(scene_instance)
 	scene_instance.stream = audio_stream
+	scene_instance.play()
 	
 	peer.initialize({
 		"iceServers": [ { "urls": ["stun:stun.l.google.com:19302"] } ]

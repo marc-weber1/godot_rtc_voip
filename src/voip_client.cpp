@@ -34,6 +34,10 @@ void VOIPClient::_physics_process(double _delta){
 
     if(to_send.size() > 0){
         for(Ref<AudioStreamVOIP> stream : peer_streams){
+            if(stream.is_null() || stream->peer_conn.is_null()){ // Should never happen, but just in case
+                continue; // Remove from array if nullptr?
+            }
+
             stream->peer_conn->put_packet(to_send);
         }
     }
@@ -52,6 +56,7 @@ Ref<AudioStream> VOIPClient::get_input() const{
 
 Ref<AudioStreamVOIP> VOIPClient::add_peer(Ref<PacketPeer> peer){
     Ref<AudioStreamVOIP> ret;
+    ret.instantiate();
     ret->peer_conn = peer;
     peer_streams.push_back(ret);
     return ret;
