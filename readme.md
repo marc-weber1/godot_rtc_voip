@@ -6,7 +6,7 @@ Inspired by the features of [V-Sekai's speech module](https://github.com/V-Sekai
 
 ## The design
 
-Spawn in a VOIPClient node, and in GDscript somewhere call it like this when a connection is made:
+Spawn in a VOIPClient node (with your mic as the input AudioStream), and in GDscript somewhere call it like this when a connection is made:
 
 ```
 var audio_stream = $VOIPClient.add_peer(packet_peer)

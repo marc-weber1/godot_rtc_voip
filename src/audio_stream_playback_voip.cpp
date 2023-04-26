@@ -24,15 +24,13 @@ bool AudioStreamPlaybackVOIP::_is_playing() const{
 // DO NOT MUTEX LOCK
 // DO NOT MALLOC/NEW
 int32_t AudioStreamPlaybackVOIP::_mix(AudioFrame *buffer, double rate_scale, int32_t frames){
-    if (!active) {
+    if (!active || base.is_null() || base->peer_conn.is_null()) {
         return 0;
     }
     
-    // DEBUG
-    for(int i=0; i<frames; i++){
-        float sample = sinf(440.0 * 2.0 * Math_PI * (samples_processed + i) / 44100.0);
-        buffer[i].left = sample;
-        buffer[i].right = sample;
+    // Debug, just throw away the packets
+    for(int i=0; base->peer_conn->get_available_packet_count() > 0; i++){
+        PackedByteArray packet = base->peer_conn->get_packet();
     }
     samples_processed += frames;
     

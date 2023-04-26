@@ -16,20 +16,35 @@ class VOIPClient : public Node {
 
 private:
     Ref<AudioStream> input;
+    bool muted;
+
+    Ref<AudioStreamPlayback> input_playback; // Should always exist if input does
     Vector<Ref<AudioStreamVOIP>> peer_streams;
+    double mic_time_processed; // in seconds
+    long mic_samples_processed;
 
 protected:
     static void _bind_methods();
 
 public:
+    const double FRAME_SIZE = 0.02; // in seconds
+    const int BITRATE = 12000; // in bits/second
+    const double SAMPLE_RATE = 44100.; // in hz, maybe get this from somewhere else
+
+
     VOIPClient();
 
     void _physics_process(double) override;
+    void send_input(double);
+
+
+    void set_muted(bool);
+    bool is_muted() const;
 
     void set_input(Ref<AudioStream>);
     Ref<AudioStream> get_input() const;
 
-    // Signal handlers
+
     Ref<AudioStreamVOIP> add_peer(Ref<PacketPeer> peer);
     void remove_peer(Ref<PacketPeer> peer);
 };

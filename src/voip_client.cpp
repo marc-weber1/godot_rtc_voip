@@ -1,22 +1,32 @@
 #include "voip_client.h"
 
+#include <godot_cpp/classes/audio_frame.hpp>
+#include <vector>
+
 using namespace godot;
 
 
 void VOIPClient::_bind_methods(){
 
-    ClassDB::bind_method(D_METHOD("set_input"), &VOIPClient::set_input);
-
-    ClassDB::bind_method(D_METHOD("get_input"), &VOIPClient::get_input);
-
     ClassDB::bind_method(D_METHOD("add_peer"), &VOIPClient::add_peer);
     ClassDB::bind_method(D_METHOD("remove_peer"), &VOIPClient::remove_peer);
 
+    ClassDB::bind_method(D_METHOD("set_input"), &VOIPClient::set_input);
+    ClassDB::bind_method(D_METHOD("get_input"), &VOIPClient::get_input);
     ClassDB::add_property(
         "VOIPClient",
         PropertyInfo(Variant::OBJECT, "input", godot::PROPERTY_HINT_NONE, "", 6U, "AudioStream"),
         "set_input",
         "get_input"
+    );
+
+    ClassDB::bind_method(D_METHOD("set_muted"), &VOIPClient::set_muted);
+    ClassDB::bind_method(D_METHOD("is_muted"), &VOIPClient::is_muted);
+    ClassDB::add_property(
+        "VOIPClient",
+        PropertyInfo(Variant::BOOL, "muted", godot::PROPERTY_HINT_NONE, "", 6U, "bool"),
+        "set_muted",
+        "is_muted"
     );
 }
 
@@ -24,21 +34,48 @@ VOIPClient::VOIPClient(){
 }
 
 void VOIPClient::_physics_process(double _delta){
+    send_input(_delta);
+}
+
+// Send the last 0.016 seconds of audio as packets to all active peers
+void VOIPClient::send_input(double _delta){
     if(input.is_null() || peer_streams.size() == 0) return;
+    if(input_playback.is_null() || !input_playback->_is_playing()) return;
 
-    // Read from microphone stream input
-    PackedByteArray to_send;
-    //input-> ???
 
-    // Send to all peers
+    // Read from microphone stream input (very janky?? is there no way to check how many samples we can read?)
 
-    if(to_send.size() > 0){
+    int frames = (int) (floor((mic_time_processed + _delta) / FRAME_SIZE) - floor(mic_time_processed / FRAME_SIZE));
+    if(frames <= 0) return;
+    int time_to_process = frames * FRAME_SIZE;
+    int samples_to_process = (int) (time_to_process * SAMPLE_RATE);
+
+    std::vector<AudioFrame> samples_to_send(samples_to_process, {0., 0.});
+    input_playback->_mix(samples_to_send.data(), 1., samples_to_process);
+
+    mic_time_processed += time_to_process;
+    mic_samples_processed += samples_to_process;
+
+
+    // Convert to packets
+
+    for(int frame=0; frame<frames; frame++){
+        PackedByteArray packet;
+
+        int samples_per_frame = (int) (FRAME_SIZE * SAMPLE_RATE);
+        for(int s=frame*samples_per_frame; s<(frame+1)*samples_per_frame; s++){
+            packet.push_back(samples_to_send[s].left); // mono
+        }
+
+
+        // Send to all peers
+
         for(Ref<AudioStreamVOIP> stream : peer_streams){
             if(stream.is_null() || stream->peer_conn.is_null()){ // Should never happen, but just in case
                 continue; // Remove from array if nullptr?
             }
 
-            stream->peer_conn->put_packet(to_send);
+            stream->peer_conn->put_packet(packet); // Convert to big endian first?
         }
     }
 }
@@ -48,10 +85,31 @@ void VOIPClient::_physics_process(double _delta){
 
 void VOIPClient::set_input(const Ref<AudioStream> _in){
     input = _in;
+    if(input.is_null()) return;
+
+    input_playback = input->instantiate_playback();
+    set_muted(muted);
 }
 
 Ref<AudioStream> VOIPClient::get_input() const{
     return input;
+}
+
+void VOIPClient::set_muted(bool mute){
+    if(!mute && !input_playback.is_null()){
+        mic_samples_processed = 0;
+        mic_time_processed = 0.;
+        input_playback->_start(0.);
+    }
+    else if(mute && !input_playback.is_null()){
+        input_playback->_stop();
+    }
+
+    muted = mute;
+}
+
+bool VOIPClient::is_muted() const{
+    return muted;
 }
 
 Ref<AudioStreamVOIP> VOIPClient::add_peer(Ref<PacketPeer> peer){

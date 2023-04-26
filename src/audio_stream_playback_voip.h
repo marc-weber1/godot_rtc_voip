@@ -22,6 +22,9 @@ protected:
     static void _bind_methods() {}
 
 public:
+    const double FRAME_SIZE = 0.02; // in seconds
+    const double SAMPLE_RATE = 44100.; // in hz, maybe get this from somewhere else
+
     Ref<AudioStreamVOIP> base;
 
     virtual void _start(double p_from_pos = 0.0) override;
