@@ -1,5 +1,6 @@
 #include "voip_client.h"
 
+#include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/audio_frame.hpp>
 #include <vector>
 
@@ -30,7 +31,9 @@ void VOIPClient::_bind_methods(){
     );
 }
 
-VOIPClient::VOIPClient(){
+
+void VOIPClient::_ready(){
+    set_muted(muted);
 }
 
 void VOIPClient::_physics_process(double _delta){
@@ -40,21 +43,20 @@ void VOIPClient::_physics_process(double _delta){
 // Send the last 0.016 seconds of audio as packets to all active peers
 void VOIPClient::send_input(double _delta){
     if(input.is_null() || peer_streams.size() == 0) return;
-    if(input_playback.is_null() || !input_playback->_is_playing()) return;
+    if(input_playback.is_null()) return;
 
 
     // Read from microphone stream input (very janky?? is there no way to check how many samples we can read?)
 
     int frames = (int) (floor((mic_time_processed + _delta) / FRAME_SIZE) - floor(mic_time_processed / FRAME_SIZE));
+    mic_time_processed += _delta;
     if(frames <= 0) return;
-    int time_to_process = frames * FRAME_SIZE;
+    double time_to_process = frames * FRAME_SIZE;
     int samples_to_process = (int) (time_to_process * SAMPLE_RATE);
 
     std::vector<AudioFrame> samples_to_send(samples_to_process, {0., 0.});
     input_playback->_mix(samples_to_send.data(), 1., samples_to_process);
 
-    mic_time_processed += time_to_process;
-    mic_samples_processed += samples_to_process;
 
 
     // Convert to packets
@@ -96,10 +98,10 @@ Ref<AudioStream> VOIPClient::get_input() const{
 }
 
 void VOIPClient::set_muted(bool mute){
+    UtilityFunctions::print("VOIPClient: set_muted ", mute);
+
     if(!mute && !input_playback.is_null()){
-        mic_samples_processed = 0;
         mic_time_processed = 0.;
-        input_playback->_start(0.);
     }
     else if(mute && !input_playback.is_null()){
         input_playback->_stop();

@@ -21,7 +21,6 @@ private:
     Ref<AudioStreamPlayback> input_playback; // Should always exist if input does
     Vector<Ref<AudioStreamVOIP>> peer_streams;
     double mic_time_processed; // in seconds
-    long mic_samples_processed;
 
 protected:
     static void _bind_methods();
@@ -32,7 +31,8 @@ public:
     const double SAMPLE_RATE = 44100.; // in hz, maybe get this from somewhere else
 
 
-    VOIPClient();
+    void _ready() override;
+
 
     void _physics_process(double) override;
     void send_input(double);
