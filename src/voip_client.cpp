@@ -2,6 +2,7 @@
 
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/audio_frame.hpp>
+#include <godot_cpp/classes/web_rtc_data_channel.hpp>
 #include <vector>
 
 using namespace godot;
@@ -44,6 +45,20 @@ void VOIPClient::_physics_process(double _delta){
 void VOIPClient::send_input(double _delta){
     if(input.is_null() || peer_streams.size() == 0) return;
     if(input_playback.is_null()) return;
+
+
+    // Poll all connections (if needed)
+
+    for(Ref<AudioStreamVOIP> stream : peer_streams){
+        if(stream.is_null() || stream->peer_conn.is_null()){ // Should never happen, but just in case
+            continue; // Remove from array if nullptr?
+        }
+
+        if(stream->peer_conn->get_class() == "WebRTCLibDataChannel"){ // Won't work for web platforms but dynamic cast to WebRTCDataChannel doesnt work
+            WebRTCDataChannel *channel = (WebRTCDataChannel *) (stream->peer_conn.ptr());
+            channel->poll();
+        }
+    }
 
 
     // Read from microphone stream input (very janky?? is there no way to check how many samples we can read?)
