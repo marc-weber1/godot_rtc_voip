@@ -2,7 +2,7 @@
 #define VOIP_CLIENT_H
 
 #include <godot_cpp/classes/node.hpp>
-#include <godot_cpp/classes/audio_stream.hpp>
+#include <godot_cpp/classes/audio_effect_capture.hpp>
 #include <godot_cpp/templates/vector.hpp>
 
 #include "audio_stream_voip.h"
@@ -15,12 +15,12 @@ class VOIPClient : public Node {
     GDCLASS(VOIPClient, Node);
 
 private:
-    Ref<AudioStream> input;
+    Ref<AudioEffectCapture> input;
     bool muted;
-
-    Ref<AudioStreamPlayback> input_playback; // Should always exist if input does
+    
     Vector<Ref<AudioStreamVOIP>> peer_streams;
-    double mic_time_processed; // in seconds
+
+    PackedByteArray _sample_buf_to_packet(PackedVector2Array);
 
 protected:
     static void _bind_methods();
@@ -41,8 +41,8 @@ public:
     void set_muted(bool);
     bool is_muted() const;
 
-    void set_input(Ref<AudioStream>);
-    Ref<AudioStream> get_input() const;
+    void set_input(Ref<AudioEffectCapture>);
+    Ref<AudioEffectCapture> get_input() const;
 
 
     Ref<AudioStreamVOIP> add_peer(Ref<PacketPeer> peer);

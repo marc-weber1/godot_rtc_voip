@@ -11,6 +11,10 @@ func _ready():
 	print("Current device: ", AudioServer.get_input_device())
 	
 	start("wss://lycan-subscribe.com/godot-rtc-demo", "e621lmao")
+	
+	var idx = AudioServer.get_bus_index("Mic")
+	var effect = AudioServer.get_bus_effect(idx, 0)
+	$VOIPClient.set_input(effect)
 
 
 func _init():

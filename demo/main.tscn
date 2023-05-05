@@ -2,10 +2,17 @@
 
 [ext_resource type="Script" path="res://multiplayer_client.gd" id="1_2ax6f"]
 
-[sub_resource type="AudioStreamMicrophone" id="AudioStreamMicrophone_j65ex"]
+[sub_resource type="AudioStreamMicrophone" id="AudioStreamMicrophone_kgam5"]
 
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_2ax6f")
+autojoin = null
+lobby = null
+mesh = null
 
 [node name="VOIPClient" type="VOIPClient" parent="."]
-input = SubResource("AudioStreamMicrophone_j65ex")
+
+[node name="Mic" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamMicrophone_kgam5")
+autoplay = true
+bus = &"Mic"
